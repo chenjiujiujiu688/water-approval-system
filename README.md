@@ -1,69 +1,95 @@
-﻿# 娑夋按瀹℃壒鏅鸿兘瀹℃牳绯荤粺 - 鑺傜偣涓€椤圭洰鍩虹鏋舵瀯
+# 涉水审批智能审核系统 - 节点一项目基础架构
 
-鏈」鐩敤浜庡畬鎴愩€婃柟鍚戞ā鍧楄绋嬪疄璺点€嬩腑鈥滄秹姘村鎵规櫤鑳藉鏍哥郴缁熲€濈殑鑺傜偣涓€浠诲姟锛屽綋鍓嶇増鏈彧瀹炵幇椤圭洰鍩虹鏋舵瀯銆侀〉闈氦浜掋€佸悗绔崰浣嶆帴鍙ｃ€佹暟鎹簱缁撴瀯鍜屽洟闃熷崗浣滄枃妗ｏ紝涓嶆彁鍓嶅疄鐜拌妭鐐逛簩/涓夌殑鐪熷疄鐭ヨ瘑搴撱€丮CP銆丄gent 瀹℃牳閫昏緫銆?
-## 1. 椤圭洰鐩綍缁撴瀯
+本项目用于完成《方向模块课程实践》中“涉水审批智能审核系统”的节点一任务。当前版本只实现项目基础架构、页面交互、后端占位接口、数据库结构和团队协作文档，不提前实现节点二、节点三中的真实知识库、MCP、Agent 审核逻辑。
+
+## 1. 项目目录结构
 
 ```text
 water-approval-system/
-鈹溾攢鈹€ frontend/                 # Vue 3 鍓嶇
-鈹溾攢鈹€ backend-java/             # Spring Boot 3.x 涓诲悗绔?鈹溾攢鈹€ ai-service-python/        # FastAPI AI 鏈嶅姟
-鈹溾攢鈹€ database/                 # 鏁版嵁搴撳垵濮嬪寲鑴氭湰
-鈹溾攢鈹€ docs/                     # 鍥㈤槦鍒嗗伐绛夋枃妗?鈹溾攢鈹€ .gitignore
-鈹斺攢鈹€ README.md
+├── frontend/                 # Vue 3 前端
+├── backend-java/             # Spring Boot 3.x 主后端
+├── ai-service-python/        # FastAPI AI 服务
+├── database/                 # 数据库初始化脚本
+├── docs/                     # 团队分工等文档
+├── .gitignore
+└── README.md
 ```
 
-## 2. 鑺傜偣涓€瀹屾垚鍐呭
+## 2. 节点一完成内容
 
-- AI 寮€鍙戠幆澧冭鏄庯細宸插湪鏈?README 涓ˉ鍏?Codex 绛?AI 宸ュ叿鎺ㄨ崘鍜屼娇鐢ㄦ柟寮忋€?- 鍓嶇椤甸潰锛氬凡瀹屾垚鐢宠鍒楄〃銆佹柊寤虹敵璇枫€佸垵瀹＄粨鏋?3 涓〉闈€?- Java Web 妗嗘灦锛氬凡瀹屾垚 Spring Boot 椤圭洰銆丷ESTful API銆丆ORS銆佹枃浠朵笂浼犮€佹湰鍦板瓨鍌ㄣ€丳ython 璋冪敤鍗犱綅 Service銆?- Python 寮€鍙戠幆澧冿細宸插畬鎴?FastAPI 鍚姩鏂囦欢銆佷緷璧栨枃浠躲€佸仴搴锋鏌ュ拰妯℃嫙鍒濆鎺ュ彛銆?- 缁撴瀯鍖栨暟鎹簱锛氬凡鎻愪緵 `users`銆乣applications`銆乣application_files`銆乣review_results` 琛ㄧ粨鏋勩€?- 鍥㈤槦鍒嗗伐涓?Git锛氬凡琛ュ厖 `docs/team.md` 鍜?Git 鎻愪氦瑙勮寖绀轰緥銆?
-## 3. 鎺ㄨ崘 AI 杈呭姪寮€鍙戠幆澧?
-### 3.1 鎺ㄨ崘宸ュ叿
+- AI 开发环境说明：已在本 README 中补充 Codex 等 AI 工具推荐与使用方式。
+- 前端页面：已完成申请列表、新建申请、初审结果 3 个页面。
+- Java Web 框架：已完成 Spring Boot 项目、RESTful API、CORS、文件上传、本地存储、Python 调用占位 Service。
+- Python 开发环境：已完成 FastAPI 启动文件、依赖文件、健康检查和模拟初审接口。
+- 结构化数据库：已提供 `users`、`applications`、`application_files`、`review_results` 表结构。
+- 团队分工与 Git：已补充 `docs/team.md` 和 Git 提交规范示例。
 
-- Codex锛氶€傚悎蹇€熺敓鎴愯绋嬮」鐩鏋躲€佹帴鍙ｄ唬鐮併€丷EADME銆佹祴璇曟牱渚嬨€?- ChatGPT / OpenAI API锛氶€傚悎杈呭姪鎾板啓鎺ュ彛鏂囨。銆佽皟璇曟€濊矾銆侀噸鏋勫缓璁€?- GitHub Copilot锛氶€傚悎鍦?IDE 涓ˉ鍏ㄥ父瑙勫墠鍚庣浠ｇ爜銆?
-### 3.2 鍦ㄦ湰椤圭洰涓殑鎺ㄨ崘浣跨敤鏂瑰紡
+## 3. 推荐 AI 辅助开发环境
 
-1. 鐢?Codex 鍒濆鍖栫洰褰曠粨鏋勩€佹帴鍙ｉ鏋跺拰璇剧▼璁捐鏂囨。銆?2. 鐢?AI 杈呭姪鐢熸垚琛ㄥ崟銆丏TO銆佸疄浣撶被銆丼QL 鑴氭湰绛夐噸澶嶆€у唴瀹广€?3. 鐢?AI 妫€鏌ュ懡鍚嶄竴鑷存€с€佹帴鍙ｅ瓧娈点€丷EADME 閮ㄧ讲姝ラ銆?4. 鑺傜偣浜?涓夐樁娈靛彲缁х画鐢?AI 杈呭姪鎺ュ叆 LangChain銆丆hromaDB銆丮CP Server銆?
-### 3.3 Codex 浣跨敤寤鸿
+### 3.1 推荐工具
 
-閫傜敤浜庢湰椤圭洰鐨勫吀鍨嬫彁闂柟寮忥細
+- Codex：适合快速生成课程项目骨架、接口代码、README、测试样例。
+- ChatGPT / OpenAI API：适合辅助撰写接口文档、调试思路、重构建议。
+- GitHub Copilot：适合在 IDE 中补全常规前后端代码。
 
-- 鈥滀负 Spring Boot 澧炲姞娑夋按鐢宠涓婁紶鎺ュ彛锛屽苟淇濆瓨闄勪欢鍒版湰鍦?uploads 鐩綍鈥?- 鈥滀负 Vue 3 鐢熸垚鐢宠鍒楄〃銆佹柊寤虹敵璇枫€佸垵瀹＄粨鏋滀笁涓〉闈⑩€?- 鈥滀负 FastAPI 棰勭暀鐭ヨ瘑搴撴绱㈠拰瀹屾暣鎬ф牎楠屽伐鍏锋帴鍙ｏ紝浣嗕笉瑕佸疄鐜扮湡瀹為€昏緫鈥?- 鈥滆ˉ鍏呰绋嬭璁?README銆佹暟鎹簱鍒濆鍖栬剼鏈拰 Git 鎻愪氦瑙勮寖鈥?
-寤鸿寮€鍙戞祦绋嬶細
+### 3.2 在本项目中的推荐使用方式
 
-1. 浜哄伐鍏堢‘瀹氬瓧娈点€侀〉闈笌鎺ュ彛杈圭晫銆?2. 浣跨敤 AI 蹇€熺敓鎴愬熀纭€浠ｇ爜銆?3. 浜哄伐妫€鏌ュ瓧娈点€佷笟鍔℃祦绋嬨€佹敞閲婂拰杩愯鍛戒护銆?4. 姣忓畬鎴愪竴涓ā鍧楀氨鍗曠嫭鎻愪氦 Git銆?
-## 4. 鎶€鏈爤璇存槑
+1. 用 Codex 初始化目录结构、接口骨架和课程设计说明文档。
+2. 用 AI 辅助生成表单、DTO、实体类、SQL 脚本等重复性内容。
+3. 用 AI 检查命名一致性、接口字段、README 部署步骤。
+4. 节点二、节点三阶段可继续用 AI 辅助接入 LangChain、ChromaDB、MCP Server。
 
-### 鍓嶇
+### 3.3 Codex 使用建议
+
+适用于本项目的典型提问方式：
+
+- “为 Spring Boot 增加涉水申请上传接口，并保存附件到本地 uploads 目录”
+- “为 Vue 3 生成申请列表、新建申请、初审结果三个页面”
+- “为 FastAPI 预留知识库检索和完整性校验工具接口，但不要实现真实逻辑”
+- “补充课程设计 README、数据库初始化脚本和 Git 提交规范”
+
+建议开发流程：
+
+1. 人工先确定字段、页面与接口边界。
+2. 使用 AI 快速生成基础代码。
+3. 人工检查字段、业务流程、注释和运行命令。
+4. 每完成一个模块就单独提交 Git。
+
+## 4. 技术栈说明
+
+### 前端
 
 - Vue 3
 - Vue Router 4
 - Axios
 - Vite
 
-### Java 鍚庣
+### Java 后端
 
 - Spring Boot 3.3.x
 - Spring Web
 - Spring Data JPA
-- SQLite / MySQL 鍙垏鎹?- Maven
+- SQLite / MySQL 可切换
+- Maven
 
-### Python AI 鏈嶅姟
+### Python AI 服务
 
 - Python 3.8+
 - FastAPI
 - Uvicorn
 - Pydantic
 
-## 5. 鐜瑕佹眰
+## 5. 环境要求
 
 - Node.js 18+
 - Java 17+
 - Maven 3.9+
 - Python 3.8+
-- MySQL 8.x锛堝彲閫夛級
+- MySQL 8.x（可选）
 
-## 6. 杩愯鏂瑰紡
+## 6. 运行方式
 
-### 6.1 鍓嶇鍚姩
+### 6.1 前端启动
 
 ```bash
 cd frontend
@@ -71,20 +97,28 @@ npm install
 npm run dev
 ```
 
-榛樿鍦板潃锛?
+默认地址：
+
 - [http://localhost:5173](http://localhost:5173)
 
-### 6.2 Java 鍚庣鍚姩
+如果 PowerShell 拦截 `npm`，请改用：
+
+```bash
+npm.cmd run dev
+```
+
+### 6.2 Java 后端启动
 
 ```bash
 cd backend-java
 mvn spring-boot:run
 ```
 
-榛樿鍦板潃锛?
+默认地址：
+
 - [http://localhost:8080](http://localhost:8080)
 
-### 6.3 Python AI 鏈嶅姟鍚姩
+### 6.3 Python AI 服务启动
 
 ```bash
 cd ai-service-python
@@ -94,91 +128,114 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8001
 ```
 
-榛樿鍦板潃锛?
+默认地址：
+
 - [http://localhost:8001](http://localhost:8001)
 
-## 7. 鍓嶅悗绔笌 AI 鏈嶅姟鎺ュ彛璇存槑
+## 7. 前后端与 AI 服务接口说明
 
-### 7.1 鍓嶇璋冪敤 Java 鍚庣
+### 7.1 前端调用 Java 后端
 
-- `POST /api/applications`锛氭柊寤虹敵璇峰苟涓婁紶澶氫釜闄勪欢
-- `GET /api/applications`锛氳幏鍙栫敵璇峰垪琛?- `GET /api/applications/{id}`锛氳幏鍙栫敵璇疯鎯?- `GET /api/applications/{id}/review`锛氳幏鍙栧垵瀹＄粨鏋滃崰浣嶆暟鎹?
-### 7.2 Java 棰勭暀璋冪敤 Python 鏈嶅姟
+- `POST /api/applications`：新建申请并上传多个附件
+- `GET /api/applications`：获取申请列表
+- `GET /api/applications/{id}`：获取申请详情
+- `GET /api/applications/{id}/review`：获取初审结果占位数据
 
-褰撳墠 `PythonAiClient` 鏆傛椂鍙繑鍥炴ā鎷熷鏍哥粨鏋滐紝鍚庣画鑺傜偣灏嗘浛鎹负鐪熷疄 HTTP 璋冪敤锛?
-- Python 鍋ュ悍妫€鏌ワ細`GET /health`
-- Python 妯℃嫙鍒濆锛歚POST /review/mock`
+### 7.2 Java 预留调用 Python 服务
 
-## 8. 鏁版嵁搴撻厤缃柟娉?
-### 8.1 榛樿鏂规锛歋QLite
+当前 `PythonAiClient` 暂时只返回模拟审核结果，后续节点将替换为真实 HTTP 调用：
 
-鏈」鐩粯璁や娇鐢?SQLite锛屼究浜庤绋嬭璁″揩閫熷惎鍔紝鏃犻渶棰濆瀹夎鏁版嵁搴撱€?
-榛樿鏁版嵁搴撴枃浠讹細
+- Python 健康检查：`GET /health`
+- Python 模拟初审：`POST /review/mock`
+
+## 8. 数据库配置方法
+
+### 8.1 默认方案：SQLite
+
+本项目默认使用 SQLite，便于课程设计快速启动，无需额外安装数据库。
+
+默认数据库文件：
 
 - `backend-java/data/water_approval.db`
 
-榛樿閰嶇疆宸插啓鍦細
+默认配置文件：
 
 - `backend-java/src/main/resources/application.yml`
 
-### 8.2 鍒囨崲鍒?MySQL
+### 8.2 切换到 MySQL
 
-1. 鍒涘缓鏁版嵁搴擄紝渚嬪 `water_approval_system`
-2. 鎵ц `database/init_mysql.sql`
-3. 淇敼 `backend-java/src/main/resources/application-mysql.yml`
-4. 浣跨敤濡備笅鍛戒护鍚姩锛?
+1. 创建数据库，例如 `water_approval_system`
+2. 执行 `database/init_mysql.sql`
+3. 修改 `backend-java/src/main/resources/application-mysql.yml`
+4. 使用如下命令启动：
+
 ```bash
 cd backend-java
 mvn spring-boot:run "-Dspring-boot.run.profiles=mysql"
 ```
 
-## 9. 鏁版嵁搴撹〃缁撴瀯璇存槑
+## 9. 数据库表结构说明
 
-褰撳墠鑺傜偣涓€宸茶鐩栦互涓嬪熀纭€琛細
+当前节点一已覆盖以下基础表：
 
-- `users`锛氬瓨鍌ㄧ敵璇蜂汉鎴栫粡鍔炰汉鍩虹淇℃伅
-- `applications`锛氬瓨鍌ㄥ彇姘寸敵璇蜂富浣撲俊鎭?- `application_files`锛氬瓨鍌ㄩ檮浠朵俊鎭?- `review_results`锛氬瓨鍌ㄥ垵瀹＄粨鏋?
-鍒濆鍖栬剼鏈細
+- `users`：存储申请人或经办人基础信息
+- `applications`：存储取水申请主体信息
+- `application_files`：存储附件信息
+- `review_results`：存储初审结果
+
+初始化脚本：
 
 - `database/init_sqlite.sql`
 - `database/init_mysql.sql`
 
-## 10. 鑺傜偣涓€鎵╁睍棰勭暀鐐?
-褰撳墠鍙仛鍗犱綅锛屼笉瀹炵幇鐪熷疄 AI 瀹℃牳閫昏緫锛屼絾宸查鐣欏悗缁墿灞曟帴鍙ｏ細
+## 10. 节点一扩展预留点
 
-- Python 鍚庣画鎺ュ叆 LangChain锛歚ai-service-python/app/services/future_extensions.py`
-- Python 鍚庣画鎺ュ叆 ChromaDB锛歚ai-service-python/app/services/future_extensions.py`
-- Python 鍚庣画瀹炵幇 MCP Server锛歚ai-service-python/app/services/future_extensions.py`
-- Python 鍚庣画瀹炵幇 `knowledge_search` 鍜?`check_completeness` 宸ュ叿锛歚ai-service-python/app/services/future_extensions.py`
-- Java 鍚庣画閫氳繃 HTTP 璋冪敤 Python 鐪熷疄鍒濆鎺ュ彛锛歚backend-java/src/main/java/com/waterapproval/service/PythonAiClient.java`
-- 鍓嶇鍚庣画灞曠ず鐪熷疄鍒濆缁撴灉鍒楄〃锛歚frontend/src/views/ReviewResultView.vue`
+当前只做占位，不实现真实 AI 审核逻辑，但已预留后续扩展接口：
 
-## 11. Git 鎻愪氦瑙勮寖
+- Python 后续接入 LangChain：`ai-service-python/app/services/future_extensions.py`
+- Python 后续接入 ChromaDB：`ai-service-python/app/services/future_extensions.py`
+- Python 后续实现 MCP Server：`ai-service-python/app/services/future_extensions.py`
+- Python 后续实现 `knowledge_search` 和 `check_completeness` 工具：`ai-service-python/app/services/future_extensions.py`
+- Java 后续通过 HTTP 调用 Python 真实初审接口：`backend-java/src/main/java/com/waterapproval/service/PythonAiClient.java`
+- 前端后续展示真实初审结果列表：`frontend/src/views/ReviewResultView.vue`
 
-寤鸿閲囩敤 Conventional Commits 椋庢牸锛?
-- `feat`: 鏂板姛鑳?- `fix`: 淇闂
-- `docs`: 鏂囨。鏇存柊
-- `refactor`: 閲嶆瀯
-- `style`: 鏍峰紡璋冩暣
-- `chore`: 宸ョ▼閰嶇疆
+## 11. Git 提交规范
 
-鎺ㄨ崘鎻愪氦绮掑害锛?
-1. 涓€涓姛鑳界偣瀵瑰簲涓€娆℃彁浜ゃ€?2. 鍓嶇銆佸悗绔€丳ython銆佹暟鎹簱銆佹枃妗ｅ敖閲忓垎寮€鎻愪氦銆?3. 姣忔鎻愪氦鍓嶇‘璁ら」鐩彲杩愯鎴栬嚦灏戠粨鏋勫畬鏁淬€?
-### 绀轰緥鎻愪氦淇℃伅
+建议采用 Conventional Commits 风格：
 
-- `feat(frontend): 鍒濆鍖?Vue 椤甸潰涓庤矾鐢辩粨鏋刞
-- `feat(backend): 鍒濆鍖?Spring Boot 鐢宠鎺ュ彛涓?CORS 閰嶇疆`
-- `feat(ai): 鍒濆鍖?FastAPI 鍋ュ悍妫€鏌ヤ笌妯℃嫙瀹℃牳鎺ュ彛`
-- `feat(db): 娣诲姞鐢ㄦ埛銆佺敵璇枫€侀檮浠躲€佸垵瀹＄粨鏋滆〃缁撴瀯`
-- `docs: 娣诲姞鍥㈤槦鍒嗗伐銆佽繍琛岃鏄庝笌 Git 鎻愪氦瑙勮寖`
+- `feat`：新功能
+- `fix`：修复问题
+- `docs`：文档更新
+- `refactor`：重构
+- `style`：样式调整
+- `chore`：工程配置
 
-## 12. 鍥㈤槦鍒嗗伐寤鸿
+推荐提交粒度：
 
-鍥㈤槦鍒嗗伐鏂囨。瑙侊細
+1. 一个功能点对应一次提交。
+2. 前端、后端、Python、数据库、文档尽量分开提交。
+3. 每次提交前确认项目可运行或至少结构完整。
 
-- [docs/team.md](/D:/鏂瑰悜妯″潡/water-approval-system/docs/team.md)
+### 示例提交信息
 
-## 13. 璇剧▼妫€鏌ュ缓璁?
-鏁欏笀妫€鏌ヨ妭鐐逛竴鏃讹紝寤鸿閲嶇偣婕旂ず锛?
-1. 鍓嶇 3 涓〉闈㈣烦杞笌琛ㄥ崟濉啓銆?2. 鏂板缓鐢宠椤甸潰涓婁紶澶氫釜闄勪欢骞舵彁浜ゃ€?3. Java 鍚庣杩斿洖鐢宠鍒楄〃銆佺敵璇疯鎯呫€佸垵瀹＄粨鏋溿€?4. Python FastAPI 鍋ュ悍妫€鏌ュ拰妯℃嫙瀹℃牳鎺ュ彛鍙闂€?5. 鏁版嵁搴撹剼鏈€佸洟闃熷垎宸ャ€丟it 鎻愪氦瑙勮寖榻愬叏銆?
+- `feat(frontend): 初始化 Vue 页面与路由结构`
+- `feat(backend): 初始化 Spring Boot 申请接口与 CORS 配置`
+- `feat(ai): 初始化 FastAPI 健康检查与模拟审核接口`
+- `feat(db): 添加用户、申请、附件、初审结果表结构`
+- `docs: 添加团队分工、运行说明与 Git 提交规范`
 
+## 12. 团队分工建议
+
+团队分工文档见：
+
+- [docs/team.md](./docs/team.md)
+
+## 13. 课程检查建议
+
+教师检查节点一时，建议重点演示：
+
+1. 前端 3 个页面跳转与表单填写。
+2. 新建申请页面上传多个附件并提交。
+3. Java 后端返回申请列表、申请详情、初审结果。
+4. Python FastAPI 健康检查和模拟审核接口可访问。
+5. 数据库脚本、团队分工、Git 提交规范齐全。
