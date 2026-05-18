@@ -16,4 +16,3 @@ class MockReviewResponse(BaseModel):
     summary: str
     suggestions: str
     future_extension_note: str
-

@@ -1,18 +1,34 @@
 from fastapi import FastAPI
 
+from app.routers.knowledge import router as knowledge_router
 from app.routers.review import router as review_router
 
 app = FastAPI(
     title="Water Approval AI Service",
-    version="1.0.0",
-    description="节点一阶段的 FastAPI 占位服务，后续可扩展为真实 AI 审核服务。",
+    version="2.0.0",
+    description=(
+        "涉水审批智能审核系统 AI 服务。"
+        "当前完成节点一和节点二，提供健康检查、模拟初审、"
+        "知识库构建、语义检索和材料完整性校验能力。"
+    ),
 )
 
 
 @app.get("/health")
-def health_check():
-    return {"status": "ok", "message": "AI service is running"}
+def health_check() -> dict:
+    return {
+        "status": "ok",
+        "message": "AI service is running",
+        "stage": "node-2",
+        "capabilities": [
+            "mock_review",
+            "knowledge_index",
+            "knowledge_search",
+            "check_completeness",
+            "mcp_tools",
+        ],
+    }
 
 
 app.include_router(review_router)
-
+app.include_router(knowledge_router)

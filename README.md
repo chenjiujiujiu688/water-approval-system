@@ -1,61 +1,121 @@
-# 涉水审批智能审核系统 - 节点一项目基础架构
+# 涉水审批智能审核系统
 
-本项目用于完成《方向模块课程实践》中“涉水审批智能审核系统”的节点一任务。当前版本只实现项目基础架构、页面交互、后端占位接口、数据库结构和团队协作文档，不提前实现节点二、节点三中的真实知识库、MCP、Agent 审核逻辑。
+本项目用于完成《方向模块课程实践》中“涉水审批智能审核系统”的课程设计开发。目前已完成节点一与节点二：
+
+- 节点一：项目基础架构搭建
+- 节点二：知识库与 MCP Server 开发
+
+当前版本已经具备前端基础页面、Spring Boot 主后端、FastAPI AI 服务、结构化数据库、知识库解析、语义检索、材料完整性校验和 MCP 工具暴露能力。节点三的 Agent 核心逻辑仍然保留为后续扩展，不在本次实现范围内。
 
 ## 1. 项目目录结构
 
 ```text
 water-approval-system/
-├── frontend/                 # Vue 3 前端
-├── backend-java/             # Spring Boot 3.x 主后端
-├── ai-service-python/        # FastAPI AI 服务
-├── database/                 # 数据库初始化脚本
-├── docs/                     # 团队分工等文档
+├── frontend/                  # Vue 3 前端
+├── backend-java/              # Spring Boot 主后端
+├── ai-service-python/         # FastAPI + LangChain + ChromaDB + MCP
+├── database/                  # SQL 脚本
+├── docs/                      # 团队分工等文档
 ├── .gitignore
 └── README.md
 ```
 
 ## 2. 节点一完成内容
 
-- AI 开发环境说明：已在本 README 中补充 Codex 等 AI 工具推荐与使用方式。
-- 前端页面：已完成申请列表、新建申请、初审结果 3 个页面。
-- Java Web 框架：已完成 Spring Boot 项目、RESTful API、CORS、文件上传、本地存储、Python 调用占位 Service。
-- Python 开发环境：已完成 FastAPI 启动文件、依赖文件、健康检查和模拟初审接口。
-- 结构化数据库：已提供 `users`、`applications`、`application_files`、`review_results` 表结构。
-- 团队分工与 Git：已补充 `docs/team.md` 和 Git 提交规范示例。
+- 完成 Vue 3 基础页面：申请列表、新建申请、初审结果
+- 完成 Spring Boot RESTful API、文件上传和 CORS 配置
+- 完成 FastAPI 健康检查和模拟初审接口
+- 完成 SQLite / MySQL 二选一数据库结构
+- 完成 README、团队分工和 Git 提交规范说明
 
-## 3. 推荐 AI 辅助开发环境
+## 3. 节点二完成内容
 
-### 3.1 推荐工具
+### 3.1 知识库文档解析
 
-- Codex：适合快速生成课程项目骨架、接口代码、README、测试样例。
-- ChatGPT / OpenAI API：适合辅助撰写接口文档、调试思路、重构建议。
-- GitHub Copilot：适合在 IDE 中补全常规前后端代码。
+Python AI 服务支持解析以下知识库文档：
 
-### 3.2 在本项目中的推荐使用方式
+- PDF
+- DOCX
+- TXT
+- MD
 
-1. 用 Codex 初始化目录结构、接口骨架和课程设计说明文档。
-2. 用 AI 辅助生成表单、DTO、实体类、SQL 脚本等重复性内容。
-3. 用 AI 检查命名一致性、接口字段、README 部署步骤。
-4. 节点二、节点三阶段可继续用 AI 辅助接入 LangChain、ChromaDB、MCP Server。
+相关代码：
 
-### 3.3 Codex 使用建议
+- `ai-service-python/app/services/document_parser.py`
 
-适用于本项目的典型提问方式：
+### 3.2 文本分块
 
-- “为 Spring Boot 增加涉水申请上传接口，并保存附件到本地 uploads 目录”
-- “为 Vue 3 生成申请列表、新建申请、初审结果三个页面”
-- “为 FastAPI 预留知识库检索和完整性校验工具接口，但不要实现真实逻辑”
-- “补充课程设计 README、数据库初始化脚本和 Git 提交规范”
+使用 LangChain `RecursiveCharacterTextSplitter` 对知识库文本进行分块，便于后续向量化和语义检索。
 
-建议开发流程：
+相关代码：
 
-1. 人工先确定字段、页面与接口边界。
-2. 使用 AI 快速生成基础代码。
-3. 人工检查字段、业务流程、注释和运行命令。
-4. 每完成一个模块就单独提交 Git。
+- `ai-service-python/app/services/knowledge_base_service.py`
 
-## 4. 技术栈说明
+### 3.3 向量化存储
+
+使用 ChromaDB 作为本地向量数据库，优先通过本地 HuggingFace Embeddings 模型进行向量化。若本机尚未准备好本地模型，代码会自动退回到本地哈希向量方案，便于课堂演示和离线开发。
+
+相关代码：
+
+- `ai-service-python/app/services/embedding_factory.py`
+- `ai-service-python/app/services/knowledge_base_service.py`
+
+### 3.4 检索功能
+
+已实现语义检索接口，返回字段包含：
+
+- 文档片段内容
+- 来源文件名
+- 来源路径
+- 文件类型
+- 分块编号
+- 相似度分数
+- 距离分数
+
+HTTP 接口：
+
+- `POST /knowledge/search`
+
+### 3.5 MCP Server
+
+已实现并暴露以下两个 MCP 工具：
+
+- `knowledge_search`
+- `check_completeness`
+
+启动文件：
+
+- `ai-service-python/mcp_server.py`
+
+### 3.6 知识库示例数据
+
+仓库中已提供：
+
+- 示例文本知识库：`ai-service-python/knowledge-base/raw/sample_regulations.md`
+- 材料检查清单：`ai-service-python/knowledge-base/checklists/application_checklist.json`
+- 示例 PDF / DOCX 生成脚本：`ai-service-python/scripts/generate_sample_knowledge_docs.py`
+
+生成示例知识库文档后，会在 `knowledge-base/raw/` 下得到：
+
+- `water_approval_handbook.docx`
+- `water_approval_checklist.pdf`
+
+## 4. 推荐 AI 辅助开发环境
+
+### 4.1 推荐工具
+
+- Codex：适合快速搭建项目骨架、接口、README 和知识库处理脚本
+- ChatGPT / OpenAI API：适合协助设计提示词、接口文档和检索测试数据
+- GitHub Copilot：适合在 IDE 中补全前后端与 Python 代码
+
+### 4.2 在本项目中的推荐用法
+
+1. 用 Codex 生成基础目录结构、REST 接口、LangChain/Chroma 服务代码。
+2. 用 AI 检查命名一致性、字段设计、README 和课程设计文档。
+3. 在节点二中让 AI 辅助生成知识库样例、检查清单样例和 MCP 工具说明。
+4. 节点三再继续扩展 Agent 编排，不在当前阶段提前实现。
+
+## 5. 技术栈
 
 ### 前端
 
@@ -69,17 +129,19 @@ water-approval-system/
 - Spring Boot 3.3.x
 - Spring Web
 - Spring Data JPA
-- SQLite / MySQL 可切换
+- SQLite / MySQL
 - Maven
 
 ### Python AI 服务
 
 - Python 3.8+
 - FastAPI
-- Uvicorn
-- Pydantic
+- LangChain
+- ChromaDB
+- HuggingFace Embeddings
+- MCP Python SDK
 
-## 5. 环境要求
+## 6. 环境要求
 
 - Node.js 18+
 - Java 17+
@@ -87,9 +149,9 @@ water-approval-system/
 - Python 3.8+
 - MySQL 8.x（可选）
 
-## 6. 运行方式
+## 7. 启动方式
 
-### 6.1 前端启动
+### 7.1 前端
 
 ```bash
 cd frontend
@@ -97,17 +159,17 @@ npm install
 npm run dev
 ```
 
-默认地址：
-
-- [http://localhost:5173](http://localhost:5173)
-
-如果 PowerShell 拦截 `npm`，请改用：
+如果 PowerShell 阻止 `npm`，请改用：
 
 ```bash
 npm.cmd run dev
 ```
 
-### 6.2 Java 后端启动
+默认地址：
+
+- [http://localhost:5173](http://localhost:5173)
+
+### 7.2 Java 后端
 
 ```bash
 cd backend-java
@@ -118,7 +180,7 @@ mvn spring-boot:run
 
 - [http://localhost:8080](http://localhost:8080)
 
-### 6.3 Python AI 服务启动
+### 7.3 Python AI 服务
 
 ```bash
 cd ai-service-python
@@ -128,31 +190,104 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8001
 ```
 
+如需启用真实 HuggingFace 向量模型，可任选其一：
+
+```bash
+set EMBEDDING_MODEL_PATH=你的本地模型目录
+```
+
+或
+
+```bash
+set ALLOW_REMOTE_EMBEDDING_DOWNLOAD=1
+```
+
 默认地址：
 
-- [http://localhost:8001](http://localhost:8001)
+- [http://localhost:8001/health](http://localhost:8001/health)
 
-## 7. 前后端与 AI 服务接口说明
+### 7.4 MCP Server
 
-### 7.1 前端调用 Java 后端
+```bash
+cd ai-service-python
+.venv\Scripts\activate
+python mcp_server.py
+```
 
-- `POST /api/applications`：新建申请并上传多个附件
-- `GET /api/applications`：获取申请列表
-- `GET /api/applications/{id}`：获取申请详情
-- `GET /api/applications/{id}/review`：获取初审结果占位数据
+## 8. 节点二使用说明
 
-### 7.2 Java 预留调用 Python 服务
+### 8.1 构建知识库索引
 
-当前 `PythonAiClient` 暂时只返回模拟审核结果，后续节点将替换为真实 HTTP 调用：
+先准备知识库文档到：
 
-- Python 健康检查：`GET /health`
-- Python 模拟初审：`POST /review/mock`
+- `ai-service-python/knowledge-base/raw/`
 
-## 8. 数据库配置方法
+然后调用：
 
-### 8.1 默认方案：SQLite
+```http
+POST /knowledge/index
+Content-Type: application/json
 
-本项目默认使用 SQLite，便于课程设计快速启动，无需额外安装数据库。
+{
+  "force_rebuild": true
+}
+```
+
+### 8.2 语义检索
+
+```http
+POST /knowledge/search
+Content-Type: application/json
+
+{
+  "query": "取水许可申请缺少哪些基础材料？",
+  "top_k": 4
+}
+```
+
+### 8.3 材料完整性校验
+
+```http
+POST /knowledge/check-completeness
+Content-Type: application/json
+
+{
+  "application_type": "default",
+  "materials": [
+    "取水许可申请表",
+    "申请人身份证明",
+    "取水地点位置图"
+  ]
+}
+```
+
+### 8.4 查看知识库状态
+
+```http
+GET /knowledge/status
+```
+
+## 9. 节点一接口说明
+
+### Java 后端接口
+
+- `POST /api/applications`
+- `GET /api/applications`
+- `GET /api/applications/{id}`
+- `GET /api/applications/{id}/review`
+
+### Python AI 接口
+
+- `GET /health`
+- `POST /review/mock`
+- `GET /knowledge/status`
+- `POST /knowledge/index`
+- `POST /knowledge/search`
+- `POST /knowledge/check-completeness`
+
+## 10. 数据库配置方法
+
+### 10.1 默认方案：SQLite
 
 默认数据库文件：
 
@@ -162,80 +297,55 @@ uvicorn main:app --reload --port 8001
 
 - `backend-java/src/main/resources/application.yml`
 
-### 8.2 切换到 MySQL
+### 10.2 切换到 MySQL
 
 1. 创建数据库，例如 `water_approval_system`
 2. 执行 `database/init_mysql.sql`
 3. 修改 `backend-java/src/main/resources/application-mysql.yml`
-4. 使用如下命令启动：
+4. 使用以下命令启动：
 
 ```bash
 cd backend-java
 mvn spring-boot:run "-Dspring-boot.run.profiles=mysql"
 ```
 
-## 9. 数据库表结构说明
+## 11. 后续节点扩展预留
 
-当前节点一已覆盖以下基础表：
+当前已经为后续节点预留以下扩展点，但未提前实现节点三 Agent 主逻辑：
 
-- `users`：存储申请人或经办人基础信息
-- `applications`：存储取水申请主体信息
-- `application_files`：存储附件信息
-- `review_results`：存储初审结果
+- Python 后续接入 LangChain Agent 编排
+- Python 后续接入 ChromaDB 扩展集合管理
+- Python 后续扩展 MCP Server 更多工具
+- Java 后续通过 HTTP 调用 Python 真实审核接口
+- 前端后续展示真实审核链路、检索命中列表和审核解释
 
-初始化脚本：
+## 12. Git 提交规范
 
-- `database/init_sqlite.sql`
-- `database/init_mysql.sql`
-
-## 10. 节点一扩展预留点
-
-当前只做占位，不实现真实 AI 审核逻辑，但已预留后续扩展接口：
-
-- Python 后续接入 LangChain：`ai-service-python/app/services/future_extensions.py`
-- Python 后续接入 ChromaDB：`ai-service-python/app/services/future_extensions.py`
-- Python 后续实现 MCP Server：`ai-service-python/app/services/future_extensions.py`
-- Python 后续实现 `knowledge_search` 和 `check_completeness` 工具：`ai-service-python/app/services/future_extensions.py`
-- Java 后续通过 HTTP 调用 Python 真实初审接口：`backend-java/src/main/java/com/waterapproval/service/PythonAiClient.java`
-- 前端后续展示真实初审结果列表：`frontend/src/views/ReviewResultView.vue`
-
-## 11. Git 提交规范
-
-建议采用 Conventional Commits 风格：
+建议使用 Conventional Commits：
 
 - `feat`：新功能
-- `fix`：修复问题
+- `fix`：问题修复
 - `docs`：文档更新
 - `refactor`：重构
 - `style`：样式调整
 - `chore`：工程配置
 
-推荐提交粒度：
-
-1. 一个功能点对应一次提交。
-2. 前端、后端、Python、数据库、文档尽量分开提交。
-3. 每次提交前确认项目可运行或至少结构完整。
-
-### 示例提交信息
+### 节点一示例提交
 
 - `feat(frontend): 初始化 Vue 页面与路由结构`
-- `feat(backend): 初始化 Spring Boot 申请接口与 CORS 配置`
-- `feat(ai): 初始化 FastAPI 健康检查与模拟审核接口`
+- `feat(backend): 初始化 Spring Boot 接口与 CORS 配置`
+- `feat(ai): 初始化 FastAPI 健康检查与模拟初审接口`
 - `feat(db): 添加用户、申请、附件、初审结果表结构`
-- `docs: 添加团队分工、运行说明与 Git 提交规范`
+- `docs: 添加团队分工与部署说明`
 
-## 12. 团队分工建议
+### 节点二示例提交
 
-团队分工文档见：
+- `feat(ai): 新增知识库文档解析与文本分块服务`
+- `feat(ai): 接入 ChromaDB 与 LangChain 语义检索`
+- `feat(mcp): 新增 knowledge_search 与 check_completeness 工具`
+- `feat(ai): 补充知识库示例数据与检查清单`
+- `docs: 更新 README 节点二运行说明`
+
+## 13. 团队分工文档
 
 - [docs/team.md](./docs/team.md)
-
-## 13. 课程检查建议
-
-教师检查节点一时，建议重点演示：
-
-1. 前端 3 个页面跳转与表单填写。
-2. 新建申请页面上传多个附件并提交。
-3. Java 后端返回申请列表、申请详情、初审结果。
-4. Python FastAPI 健康检查和模拟审核接口可访问。
-5. 数据库脚本、团队分工、Git 提交规范齐全。

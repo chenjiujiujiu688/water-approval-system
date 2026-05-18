@@ -7,13 +7,15 @@ def generate_mock_review(request: MockReviewRequest) -> MockReviewResponse:
         review_status="MOCK_APPROVED",
         risk_level="LOW",
         summary=(
-            f"申请《{request.title}》已完成节点一模拟初审，"
-            f"当前仅验证系统流程与接口联通。"
+            f"申请《{request.title}》已完成节点一/节点二阶段的模拟初审，"
+            "当前主要用于验证前后端联通、知识库检索接口和 AI 服务基础能力。"
         ),
-        suggestions="后续节点将接入真实知识库检索、材料完整性校验和智能体审核能力。",
+        suggestions=(
+            "建议在节点三中接入真实审核流程，将知识库检索、"
+            "材料完整性校验结果与 Agent 决策流程整合。"
+        ),
         future_extension_note=(
-            "Reserved for LangChain, ChromaDB, MCP Server, knowledge_search and "
-            "check_completeness tools."
+            "Node 2 ready: LangChain, ChromaDB, MCP knowledge_search, "
+            "MCP check_completeness. Node 3 agent orchestration is not enabled yet."
         ),
     )
-

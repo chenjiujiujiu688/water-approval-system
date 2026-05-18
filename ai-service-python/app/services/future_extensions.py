@@ -1,35 +1,25 @@
-"""
-后续节点扩展预留文件。
-
-当前节点一只保留接口和目录结构，不实现真实逻辑。
-
-可在后续阶段继续扩展：
-1. LangChain 工作流编排
-2. ChromaDB 向量知识库
-3. MCP Server 对外工具服务
-4. knowledge_search 工具
-5. check_completeness 工具
-"""
+from app.services.completeness_service import get_completeness_service
+from app.services.knowledge_base_service import get_knowledge_base_service
 
 
-def knowledge_search(query: str) -> dict:
-    return {
-        "implemented": False,
-        "message": "knowledge_search 将在后续节点实现。"
-    }
+def knowledge_search(query: str, top_k: int = 4) -> dict:
+    return get_knowledge_base_service().search(query=query, top_k=top_k)
 
 
 def check_completeness(payload: dict) -> dict:
-    return {
-        "implemented": False,
-        "message": "check_completeness 将在后续节点实现。"
-    }
+    application_type = payload.get("application_type", "default")
+    materials = payload.get("materials", [])
+    return get_completeness_service().check_materials(
+        application_type=application_type,
+        materials=materials,
+    )
 
 
 class McpServerPlaceholder:
     def describe(self) -> dict:
         return {
-            "implemented": False,
-            "message": "MCP Server 将在后续节点实现。"
+            "implemented": True,
+            "server_name": "water-approval-knowledge-mcp",
+            "tools": ["knowledge_search", "check_completeness"],
+            "stage_note": "Node 2 MCP tools are ready. Node 3 agent flow is still reserved.",
         }
-

@@ -18,3 +18,5 @@ uploads/
 backend-java/src/main/resources/uploads/
 *.log
 data/
+ai-service-python/knowledge-base/chroma/
+ai-service-python/knowledge-base/index_state.json
