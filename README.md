@@ -36,12 +36,20 @@ Python AI 服务支持解析以下知识库文档：
 
 - PDF
 - DOCX
+- DOC
+- JPG / JPEG / PNG
 - TXT
 - MD
 
 相关代码：
 
 - `ai-service-python/app/services/document_parser.py`
+
+说明：
+
+- `.doc` 旧版 Word 文档通过 Windows 上的 Microsoft Word / WPS COM 能力转换解析。
+- 图片材料通过 Tesseract OCR 识别文字；若本机未安装 Tesseract，系统会保留图片材料记录并返回清晰提示。
+- 证件照片和营业执照照片的 OCR 效果与图片清晰度、倾斜角度、反光情况有关，建议演示时使用清晰截图或扫描件。
 
 ### 3.2 文本分块
 
@@ -200,6 +208,12 @@ set EMBEDDING_MODEL_PATH=你的本地模型目录
 
 ```bash
 set ALLOW_REMOTE_EMBEDDING_DOWNLOAD=1
+```
+
+若需要识别 JPG / PNG 图片材料，请确认已安装 Tesseract OCR：
+
+```bash
+winget install -e --id UB-Mannheim.TesseractOCR
 ```
 
 默认地址：
