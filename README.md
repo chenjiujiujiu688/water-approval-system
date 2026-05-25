@@ -1,11 +1,12 @@
 # 涉水审批智能审核系统
 
-本项目用于完成《方向模块课程实践》中“涉水审批智能审核系统”的课程设计开发。目前已完成节点一与节点二：
+本项目用于完成《方向模块课程实践》中“涉水审批智能审核系统”的课程设计开发。目前已完成节点一、节点二与节点三：
 
 - 节点一：项目基础架构搭建
 - 节点二：知识库与 MCP Server 开发
+- 节点三：初审 Agent 与系统集成
 
-当前版本已经具备前端基础页面、Spring Boot 主后端、FastAPI AI 服务、结构化数据库、知识库解析、语义检索、材料完整性校验和 MCP 工具暴露能力。节点三的 Agent 核心逻辑仍然保留为后续扩展，不在本次实现范围内。
+当前版本已经具备前端基础页面、Spring Boot 主后端、FastAPI AI 服务、结构化数据库、知识库解析、语义检索、材料完整性校验、MCP 工具暴露、Agent 初审和 Java/Python 集成能力。
 
 ## 1. 项目目录结构
 
@@ -107,6 +108,43 @@ HTTP 接口：
 
 - `water_approval_handbook.docx`
 - `water_approval_checklist.pdf`
+
+## 4. 节点三完成内容
+
+### 4.1 初审 Agent
+
+Python AI 服务新增 `POST /agent/review` 接口，用于执行取水申请材料初审。Agent 会读取 Java 后端传入的申请表字段和附件路径，自动解析上传的 PDF、DOCX、DOC、JPG、PNG 等材料。
+
+相关代码：
+
+- `ai-service-python/app/services/agent_review_service.py`
+- `ai-service-python/app/routers/agent.py`
+
+### 4.2 MCP 工具调用
+
+Agent 通过 `McpToolBridge` 调用节点二已实现的工具能力：
+
+- `knowledge_search`：检索取水许可知识库，返回合规依据片段。
+- `check_completeness`：对照材料清单检查缺失项。
+
+相关代码：
+
+- `ai-service-python/app/services/mcp_tool_bridge.py`
+- `ai-service-python/mcp_server.py`
+
+### 4.3 结构化与非结构化文档初审
+
+结构化材料通过文档解析器提取文本；图片、扫描件通过 Tesseract OCR 进入识别流程。Agent 会检查材料缺失、关键字段缺失、用途说明缺失、证照类型疑似不一致等问题，并给出稳定的补正建议。
+
+### 4.4 Java / Python 系统集成
+
+Java 后端在创建申请和查询初审结果时，通过 HTTP 调用 Python AI 服务：
+
+- Java 调用：`POST http://localhost:8001/agent/review`
+- Java 入口：`GET /api/applications/{id}/review`
+- 前端页面：`/review?id=申请ID`
+
+初审结果会保存到 `review_results` 表，并在前端展示审核状态、风险等级、材料完整率、不合规项和知识库依据来源。
 
 ## 4. 推荐 AI 辅助开发环境
 

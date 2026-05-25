@@ -203,6 +203,32 @@ textarea {
   padding-left: 20px;
 }
 
+.multiline-text {
+  white-space: pre-line;
+}
+
+.review-list {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+}
+
+.source-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.source-list span {
+  border-radius: 999px;
+  background: #edf7ed;
+  color: #25673f;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
 .success-text {
   color: #1b6f3a;
 }

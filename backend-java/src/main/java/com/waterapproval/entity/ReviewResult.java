@@ -35,6 +35,15 @@ public class ReviewResult {
     @Column(columnDefinition = "TEXT")
     private String suggestions;
 
+    @Column(columnDefinition = "TEXT")
+    private String issues;
+
+    @Column(name = "knowledge_sources", columnDefinition = "TEXT")
+    private String knowledgeSources;
+
+    @Column(name = "completeness_rate")
+    private Double completenessRate;
+
     @Column(name = "reviewed_at")
     private LocalDateTime reviewedAt;
 
@@ -86,6 +95,30 @@ public class ReviewResult {
         this.suggestions = suggestions;
     }
 
+    public String getIssues() {
+        return issues;
+    }
+
+    public void setIssues(String issues) {
+        this.issues = issues;
+    }
+
+    public String getKnowledgeSources() {
+        return knowledgeSources;
+    }
+
+    public void setKnowledgeSources(String knowledgeSources) {
+        this.knowledgeSources = knowledgeSources;
+    }
+
+    public Double getCompletenessRate() {
+        return completenessRate;
+    }
+
+    public void setCompletenessRate(Double completenessRate) {
+        this.completenessRate = completenessRate;
+    }
+
     public LocalDateTime getReviewedAt() {
         return reviewedAt;
     }
@@ -94,4 +127,3 @@ public class ReviewResult {
         this.reviewedAt = reviewedAt;
     }
 }
-

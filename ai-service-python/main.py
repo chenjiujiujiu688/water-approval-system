@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.routers.agent import router as agent_router
 from app.routers.knowledge import router as knowledge_router
 from app.routers.review import router as review_router
 
@@ -19,16 +20,18 @@ def health_check() -> dict:
     return {
         "status": "ok",
         "message": "AI service is running",
-        "stage": "node-2",
+        "stage": "node-3",
         "capabilities": [
             "mock_review",
             "knowledge_index",
             "knowledge_search",
             "check_completeness",
             "mcp_tools",
+            "initial_review_agent",
         ],
     }
 
 
 app.include_router(review_router)
 app.include_router(knowledge_router)
+app.include_router(agent_router)

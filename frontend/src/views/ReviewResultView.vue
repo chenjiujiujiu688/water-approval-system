@@ -3,7 +3,7 @@
     <PageHeader
       kicker="Review"
       title="初审结果"
-      description="当前节点一仅展示模拟初审结果，后续节点将替换为真实 AI 审核结果。"
+      description="展示 Python Agent 基于知识库、材料清单和上传附件生成的初审结论。"
     />
 
     <div class="toolbar">
@@ -23,13 +23,29 @@
         <p class="label-text">风险等级</p>
         <h3>{{ result.riskLevel }}</h3>
       </div>
+      <div>
+        <p class="label-text">材料完整率</p>
+        <h3>{{ formatRate(result.completenessRate) }}</h3>
+      </div>
       <div class="full-width">
         <p class="label-text">审核摘要</p>
         <p>{{ result.summary }}</p>
       </div>
       <div class="full-width">
         <p class="label-text">建议项</p>
-        <p>{{ result.suggestions }}</p>
+        <p class="multiline-text">{{ result.suggestions }}</p>
+      </div>
+      <div class="full-width" v-if="result.issues?.length">
+        <p class="label-text">不合规 / 需补正项</p>
+        <ul class="review-list">
+          <li v-for="issue in result.issues" :key="issue">{{ issue }}</li>
+        </ul>
+      </div>
+      <div class="full-width" v-if="result.knowledgeSources?.length">
+        <p class="label-text">知识库依据来源</p>
+        <div class="source-list">
+          <span v-for="source in result.knowledgeSources" :key="source">{{ source }}</span>
+        </div>
       </div>
       <div>
         <p class="label-text">申请标题</p>
@@ -71,6 +87,13 @@ async function loadReview() {
   } catch (error) {
     errorMessage.value = "初审结果获取失败，请确认申请已经存在。";
   }
+}
+
+function formatRate(value) {
+  if (value === null || value === undefined) {
+    return "0%";
+  }
+  return `${Math.round(Number(value) * 100)}%`;
 }
 
 onMounted(loadReview);

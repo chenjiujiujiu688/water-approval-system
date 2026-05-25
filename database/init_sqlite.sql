@@ -39,7 +39,9 @@ CREATE TABLE IF NOT EXISTS review_results (
     summary TEXT NOT NULL,
     risk_level TEXT NOT NULL,
     suggestions TEXT,
+    issues TEXT,
+    knowledge_sources TEXT,
+    completeness_rate REAL,
     reviewed_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (application_id) REFERENCES applications(id)
 );
-

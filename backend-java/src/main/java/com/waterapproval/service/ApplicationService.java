@@ -17,6 +17,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -84,16 +86,10 @@ public class ApplicationService {
         applicationRepository.save(application);
 
         saveFiles(application, files);
+        List<ApplicationFile> savedFiles = applicationFileRepository.findByApplication_Id(application.getId());
 
-        ReviewResultResponse mockReview = pythonAiClient.mockReview(application);
-        ReviewResult reviewResult = new ReviewResult();
-        reviewResult.setApplication(application);
-        reviewResult.setReviewStatus(mockReview.getReviewStatus());
-        reviewResult.setRiskLevel(mockReview.getRiskLevel());
-        reviewResult.setSummary(mockReview.getSummary());
-        reviewResult.setSuggestions(mockReview.getSuggestions());
-        reviewResult.setReviewedAt(mockReview.getReviewedAt());
-        reviewResultRepository.save(reviewResult);
+        ReviewResultResponse agentReview = pythonAiClient.review(application, savedFiles);
+        saveReviewResult(application, agentReview);
 
         return getApplicationById(application.getId());
     }
@@ -118,18 +114,9 @@ public class ApplicationService {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new EntityNotFoundException("申请不存在，ID=" + applicationId));
 
-        ReviewResult reviewResult = reviewResultRepository.findByApplication_Id(applicationId)
-                .orElseGet(() -> {
-                    ReviewResultResponse fallback = pythonAiClient.mockReview(application);
-                    ReviewResult entity = new ReviewResult();
-                    entity.setApplication(application);
-                    entity.setReviewStatus(fallback.getReviewStatus());
-                    entity.setRiskLevel(fallback.getRiskLevel());
-                    entity.setSummary(fallback.getSummary());
-                    entity.setSuggestions(fallback.getSuggestions());
-                    entity.setReviewedAt(fallback.getReviewedAt());
-                    return reviewResultRepository.save(entity);
-                });
+        List<ApplicationFile> files = applicationFileRepository.findByApplication_Id(applicationId);
+        ReviewResultResponse agentReview = pythonAiClient.review(application, files);
+        ReviewResult reviewResult = saveReviewResult(application, agentReview);
 
         ReviewResultResponse response = new ReviewResultResponse();
         response.setApplicationId(application.getId());
@@ -138,6 +125,9 @@ public class ApplicationService {
         response.setRiskLevel(reviewResult.getRiskLevel());
         response.setSummary(reviewResult.getSummary());
         response.setSuggestions(reviewResult.getSuggestions());
+        response.setIssues(splitLines(reviewResult.getIssues()));
+        response.setKnowledgeSources(splitLines(reviewResult.getKnowledgeSources()));
+        response.setCompletenessRate(reviewResult.getCompletenessRate());
         response.setReviewedAt(reviewResult.getReviewedAt());
         return response;
     }
@@ -156,7 +146,7 @@ public class ApplicationService {
             }
 
             String generatedName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path target = uploadPath.resolve(generatedName);
+            Path target = uploadPath.resolve(generatedName).toAbsolutePath().normalize();
             Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
 
             ApplicationFile applicationFile = new ApplicationFile();
@@ -168,6 +158,40 @@ public class ApplicationService {
             applicationFile.setUploadedAt(LocalDateTime.now());
             applicationFileRepository.save(applicationFile);
         }
+    }
+
+    private ReviewResult saveReviewResult(Application application, ReviewResultResponse response) {
+        ReviewResult reviewResult = reviewResultRepository.findByApplication_Id(application.getId())
+                .orElseGet(() -> {
+                    ReviewResult entity = new ReviewResult();
+                    entity.setApplication(application);
+                    return entity;
+                });
+        reviewResult.setReviewStatus(response.getReviewStatus());
+        reviewResult.setRiskLevel(response.getRiskLevel());
+        reviewResult.setSummary(response.getSummary());
+        reviewResult.setSuggestions(response.getSuggestions());
+        reviewResult.setIssues(joinLines(response.getIssues()));
+        reviewResult.setKnowledgeSources(joinLines(response.getKnowledgeSources()));
+        reviewResult.setCompletenessRate(response.getCompletenessRate());
+        reviewResult.setReviewedAt(response.getReviewedAt());
+        return reviewResultRepository.save(reviewResult);
+    }
+
+    private String joinLines(List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return "";
+        }
+        return String.join("\n", values);
+    }
+
+    private List<String> splitLines(String value) {
+        if (value == null || value.isBlank()) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(value.split("\\R"))
+                .filter(line -> !line.isBlank())
+                .collect(Collectors.toList());
     }
 
     private ApplicationResponse toResponse(Application application) {

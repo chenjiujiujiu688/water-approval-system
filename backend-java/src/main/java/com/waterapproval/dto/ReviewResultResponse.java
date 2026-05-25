@@ -1,6 +1,8 @@
 package com.waterapproval.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReviewResultResponse {
 
@@ -10,6 +12,9 @@ public class ReviewResultResponse {
     private String summary;
     private String riskLevel;
     private String suggestions;
+    private List<String> issues = new ArrayList<>();
+    private List<String> knowledgeSources = new ArrayList<>();
+    private Double completenessRate;
     private LocalDateTime reviewedAt;
 
     public Long getApplicationId() {
@@ -60,6 +65,30 @@ public class ReviewResultResponse {
         this.suggestions = suggestions;
     }
 
+    public List<String> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<String> issues) {
+        this.issues = issues;
+    }
+
+    public List<String> getKnowledgeSources() {
+        return knowledgeSources;
+    }
+
+    public void setKnowledgeSources(List<String> knowledgeSources) {
+        this.knowledgeSources = knowledgeSources;
+    }
+
+    public Double getCompletenessRate() {
+        return completenessRate;
+    }
+
+    public void setCompletenessRate(Double completenessRate) {
+        this.completenessRate = completenessRate;
+    }
+
     public LocalDateTime getReviewedAt() {
         return reviewedAt;
     }
@@ -68,4 +97,3 @@ public class ReviewResultResponse {
         this.reviewedAt = reviewedAt;
     }
 }
-

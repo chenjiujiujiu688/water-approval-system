@@ -113,8 +113,11 @@
 
 <script setup>
 import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 import { createApplication } from "../api/application";
 import PageHeader from "../components/PageHeader.vue";
+
+const router = useRouter();
 
 const defaultForm = () => ({
   title: "",
@@ -160,6 +163,7 @@ async function submitApplication() {
     const { data } = await createApplication(payload);
     resetForm();
     successMessage.value = `申请提交成功，申请编号：${data.id}`;
+    router.push(`/review?id=${data.id}`);
   } catch (error) {
     errorMessage.value = "申请提交失败，请确认后端接口与跨域配置正常。";
   } finally {
