@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-import shutil
+import time
 from functools import lru_cache
 
 from chromadb.config import Settings as ChromaSettings
@@ -46,14 +46,13 @@ class KnowledgeBaseService:
                 chunk.metadata["chunk_index"] = index
             documents.extend(split_docs)
 
-        if force_rebuild and settings.chroma_dir.exists():
-            shutil.rmtree(settings.chroma_dir)
-
-        vector_store = self._create_vector_store()
+        collection_name = self._next_collection_name() if force_rebuild else self._active_collection_name()
+        vector_store = self._create_vector_store(collection_name=collection_name)
         vector_store.add_documents(documents)
 
         payload = {
             "indexed": True,
+            "collection_name": collection_name,
             "document_count": len(parsed_documents),
             "chunk_count": len(documents),
             "embedding_backend": self.embedding_backend,
@@ -69,7 +68,7 @@ class KnowledgeBaseService:
         if not settings.chroma_dir.exists():
             raise ValueError("知识库尚未构建，请先调用 /knowledge/index 建立向量库。")
 
-        vector_store = self._create_vector_store()
+        vector_store = self._create_vector_store(collection_name=self._active_collection_name())
         results = vector_store.similarity_search_with_score(query, k=top_k)
         hits = []
         for document, distance_score in results:
@@ -129,14 +128,23 @@ class KnowledgeBaseService:
         settings.raw_documents_dir.mkdir(parents=True, exist_ok=True)
         settings.checklist_dir.mkdir(parents=True, exist_ok=True)
 
-    def _create_vector_store(self) -> Chroma:
+    def _active_collection_name(self) -> str:
+        if settings.index_state_path.exists():
+            stored = json.loads(settings.index_state_path.read_text(encoding="utf-8"))
+            return stored.get("collection_name") or settings.collection_name
+        return settings.collection_name
+
+    def _next_collection_name(self) -> str:
+        return f"{settings.collection_name}-{int(time.time())}"
+
+    def _create_vector_store(self, collection_name: str) -> Chroma:
         client_settings = ChromaSettings(
             anonymized_telemetry=False,
             is_persistent=True,
             persist_directory=str(settings.chroma_dir),
         )
         return Chroma(
-            collection_name=settings.collection_name,
+            collection_name=collection_name,
             persist_directory=str(settings.chroma_dir),
             client_settings=client_settings,
             embedding_function=self.embeddings,
