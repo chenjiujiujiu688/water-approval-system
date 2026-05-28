@@ -114,10 +114,17 @@ public class ApplicationService {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new EntityNotFoundException("申请不存在，ID=" + applicationId));
 
-        List<ApplicationFile> files = applicationFileRepository.findByApplication_Id(applicationId);
-        ReviewResultResponse agentReview = pythonAiClient.review(application, files);
-        ReviewResult reviewResult = saveReviewResult(application, agentReview);
+        return reviewResultRepository.findByApplication_Id(applicationId)
+                .map(this::toReviewResponse)
+                .orElseGet(() -> {
+                    List<ApplicationFile> files = applicationFileRepository.findByApplication_Id(applicationId);
+                    ReviewResultResponse agentReview = pythonAiClient.review(application, files);
+                    return toReviewResponse(saveReviewResult(application, agentReview));
+                });
+    }
 
+    private ReviewResultResponse toReviewResponse(ReviewResult reviewResult) {
+        Application application = reviewResult.getApplication();
         ReviewResultResponse response = new ReviewResultResponse();
         response.setApplicationId(application.getId());
         response.setApplicationTitle(application.getTitle());

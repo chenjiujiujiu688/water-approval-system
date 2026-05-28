@@ -26,7 +26,7 @@ public class ReviewResult {
     @Column(name = "review_status", nullable = false)
     private String reviewStatus;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String summary;
 
     @Column(name = "risk_level", nullable = false)

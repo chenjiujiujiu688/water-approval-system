@@ -23,7 +23,12 @@ class CompletenessService:
         for item in checklist:
             aliases = {self._normalize_name(alias) for alias in item.get("aliases", [])}
             aliases.add(self._normalize_name(item["material_name"]))
-            target_list = present_items if aliases & normalized_input else missing_items
+            is_present = any(
+                alias in material or material in alias
+                for alias in aliases
+                for material in normalized_input
+            )
+            target_list = present_items if is_present else missing_items
             target_list.append(
                 {
                     "material_name": item["material_name"],

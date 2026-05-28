@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime
+import re
+from datetime import date, datetime
 from pathlib import Path
 
 from app.schemas.agent import AgentIssue, AgentReviewRequest, AgentReviewResponse
@@ -124,6 +125,29 @@ class InitialReviewAgent:
                         evidence=content[:180],
                     )
                 )
+            if "驾驶证" in filename or "driving license" in normalized_content or "机动车驾驶证" in content:
+                issues.append(
+                    AgentIssue(
+                        category="实质合规",
+                        severity="HIGH",
+                        message=f"证件类型不符合身份证明要求：{filename}",
+                        suggestion="取水许可申请应上传身份证或经办人身份证明，驾驶证不能替代身份证明材料。",
+                        evidence=content[:180],
+                    )
+                )
+            expired_period = self._find_expired_valid_period(content)
+            if expired_period and self._is_identity_or_license_file(filename, content):
+                issues.append(
+                    AgentIssue(
+                        category="实质合规",
+                        severity="HIGH",
+                        message=f"证照材料已过有效期：{filename}",
+                        suggestion=(
+                            f"系统识别到有效期截至 {expired_period}，请上传仍在有效期内的身份证明或营业执照材料。"
+                        ),
+                        evidence=content[:220],
+                    )
+                )
             if "营业执照" in filename and "ocr 解析失败" in content:
                 issues.append(
                     AgentIssue(
@@ -144,6 +168,29 @@ class InitialReviewAgent:
                     )
                 )
         return issues
+
+    def _is_identity_or_license_file(self, filename: str, content: str) -> bool:
+        keywords = ("身份证", "营业执照", "法人证书", "证照", "居民身份证", "营业期限")
+        return any(keyword in filename or keyword in content for keyword in keywords)
+
+    def _find_expired_valid_period(self, content: str) -> str | None:
+        for start_raw, end_raw in re.findall(
+            r"(\d{4}[.\-/年]\d{1,2}[.\-/月]\d{1,2}日?)\s*[-至到]\s*(\d{4}[.\-/年]\d{1,2}[.\-/月]\d{1,2}日?)",
+            content,
+        ):
+            end_date = self._parse_date(end_raw)
+            if end_date and end_date < date.today():
+                return end_date.isoformat()
+        return None
+
+    def _parse_date(self, value: str) -> date | None:
+        parts = re.findall(r"\d+", value)
+        if len(parts) < 3:
+            return None
+        try:
+            return date(int(parts[0]), int(parts[1]), int(parts[2]))
+        except ValueError:
+            return None
 
     def _check_business_rules(
         self,
