@@ -96,18 +96,23 @@ HTTP 接口：
 
 - `ai-service-python/mcp_server.py`
 
-### 3.6 知识库示例数据
+### 3.6 知识库依据数据
 
-仓库中已提供：
+按照实验指导书要求，当前 RAG 知识库只保留以下三份合规审核依据材料：
 
-- 示例文本知识库：`ai-service-python/knowledge-base/raw/sample_regulations.md`
-- 材料检查清单：`ai-service-python/knowledge-base/checklists/application_checklist.json`
-- 示例 PDF / DOCX 生成脚本：`ai-service-python/scripts/generate_sample_knowledge_docs.py`
+- `ai-service-python/knowledge-base/raw/取水许可办理需资料及流程.docx`
+- `ai-service-python/knowledge-base/raw/填报说明.docx`
+- `ai-service-python/knowledge-base/raw/国民经济分类国标.pdf`
 
-生成示例知识库文档后，会在 `knowledge-base/raw/` 下得到：
+其中：
 
-- `water_approval_handbook.docx`
-- `water_approval_checklist.pdf`
+- `取水许可办理需资料及流程.docx` 用于办理资料和流程依据检索。
+- `填报说明.docx` 用于申请书字段填写规范检索。
+- `国民经济分类国标.pdf` 用于“行业类别”字段合规性审核依据检索。
+
+材料完整性检查清单仍保存在：
+
+- `ai-service-python/knowledge-base/checklists/application_checklist.json`
 
 ## 4. 节点三完成内容
 
