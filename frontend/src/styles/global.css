@@ -48,12 +48,22 @@ textarea {
 }
 
 .side-panel {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   padding: 32px 24px;
   background: linear-gradient(180deg, #154c79 0%, #1e6aa8 100%);
   color: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: auto;
+}
+
+.side-panel h1 {
+  margin: 6px 0 0;
+  font-size: 32px;
+  line-height: 1.35;
 }
 
 .side-kicker,
@@ -185,6 +195,18 @@ textarea {
   gap: 8px;
 }
 
+.date-range {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.date-range span {
+  color: #5d7188;
+  font-weight: 700;
+}
+
 .full-width {
   grid-column: 1 / -1;
 }
@@ -242,9 +264,18 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .side-panel {
+    position: static;
+    height: auto;
+  }
+
   .page-header,
   .form-grid,
   .result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .date-range {
     grid-template-columns: 1fr;
   }
 }

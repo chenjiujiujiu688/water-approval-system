@@ -69,12 +69,21 @@
 
       <label>
         <span>申请期限</span>
-        <input
-          v-model="form.applicationPeriod"
-          type="text"
-          placeholder="例如：2026-05-01 至 2026-06-30"
-          required
-        />
+        <div class="date-range">
+          <input
+            v-model="period.startDate"
+            type="date"
+            aria-label="申请开始日期"
+            required
+          />
+          <span>至</span>
+          <input
+            v-model="period.endDate"
+            type="date"
+            aria-label="申请结束日期"
+            required
+          />
+        </div>
       </label>
 
       <label class="full-width">
@@ -113,6 +122,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { createApplication } from "../api/application";
 import PageHeader from "../components/PageHeader.vue";
@@ -127,15 +137,25 @@ const defaultForm = () => ({
   email: "",
   waterUsage: "",
   waterLocation: "",
-  applicationPeriod: "",
   description: ""
 });
 
 const form = reactive(defaultForm());
+const period = reactive({
+  startDate: "",
+  endDate: ""
+});
 const selectedFiles = ref([]);
 const submitting = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
+
+const formattedApplicationPeriod = computed(() => {
+  if (!period.startDate || !period.endDate) {
+    return "";
+  }
+  return `${period.startDate} 至 ${period.endDate}`;
+});
 
 function handleFiles(event) {
   selectedFiles.value = Array.from(event.target.files || []);
@@ -143,6 +163,8 @@ function handleFiles(event) {
 
 function resetForm() {
   Object.assign(form, defaultForm());
+  period.startDate = "";
+  period.endDate = "";
   selectedFiles.value = [];
   successMessage.value = "";
   errorMessage.value = "";
@@ -153,10 +175,17 @@ async function submitApplication() {
   successMessage.value = "";
   errorMessage.value = "";
 
+  if (period.endDate < period.startDate) {
+    errorMessage.value = "申请期限填写有误：结束日期不能早于开始日期。";
+    submitting.value = false;
+    return;
+  }
+
   const payload = new FormData();
   Object.entries(form).forEach(([key, value]) => {
     payload.append(key, value);
   });
+  payload.append("applicationPeriod", formattedApplicationPeriod.value);
   selectedFiles.value.forEach((file) => payload.append("files", file));
 
   try {
